@@ -8,12 +8,14 @@ module random_generator (
     output logic [31:0] random_o
 );
 
-logic next_bit = random_o[31] ^
-                 random_o[30] ^
-                 random_o[29] ^
-                 random_o[27] ^
-                 random_o[25] ^
-                 random_o[ 0]; 
+logic next_bit;
+
+assign next_bit = random_o[31] ^
+                  random_o[30] ^
+                  random_o[29] ^
+                  random_o[27] ^
+                  random_o[25] ^
+                  random_o[ 0]; 
 
 always_ff @(posedge clk) begin
     if (!rst)
