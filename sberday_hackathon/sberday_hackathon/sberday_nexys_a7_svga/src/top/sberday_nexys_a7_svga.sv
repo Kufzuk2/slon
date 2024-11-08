@@ -44,11 +44,12 @@ module sberday_nexys_a7_svga (
     wire          h_sync, v_sync;     // Horizontal & Vertical synchronization
     wire          disp_enbl;          // Image output is allowed
   //----------- Buttons state                                    -----------//
-    logic         button_c, button_c_d, button_c_u;
-    logic         button_u, button_u_d, button_u_u;
-    logic         button_d, button_d_d, button_d_u;
-    logic         button_l, button_l_d, button_l_u;
-    logic         button_r, button_l_r, button_r_u;
+    logic         button_c, button_c_d, button_c_u, long_c;
+    logic         button_u, button_u_d, button_u_u, long_u;
+    logic         button_d, button_d_d, button_d_u, long_d;
+    logic         button_l, button_l_d, button_l_u, long_l;
+    logic         button_r, button_l_r, button_r_u, long_r;
+
   //----------- Seven Segments Indicators                        -----------//
     wire  [31:0]  sevseg_32bit_hex_val;
   //----------- Accelerometor                                    -----------//
@@ -88,7 +89,8 @@ module sberday_nexys_a7_svga (
       .sw_i        ( BTNC       ),
       .sw_state_o  ( button_c   ),
       .sw_down_o   ( button_c_d ),
-      .sw_up_o     ( button_c_u )
+      .sw_up_o     ( button_c_u ),
+      .sw_long     ( long_c     )
     );
     button_debouncer dbns_up (
       .clk         ( pixel_clk  ),
@@ -96,7 +98,8 @@ module sberday_nexys_a7_svga (
       .sw_i        ( BTNU       ),
       .sw_state_o  ( button_u   ),
       .sw_down_o   ( button_u_d ),
-      .sw_up_o     ( button_u_u )
+      .sw_up_o     ( button_u_u ),
+      .sw_long     ( long_u     )
     );
     button_debouncer dbns_left (
       .clk         ( pixel_clk  ),
@@ -104,7 +107,8 @@ module sberday_nexys_a7_svga (
       .sw_i        ( BTNL       ),
       .sw_state_o  ( button_l   ),
       .sw_down_o   ( button_l_d ),
-      .sw_up_o     ( button_l_u )
+      .sw_up_o     ( button_l_u ),
+      .sw_long     ( long_l     )
     );
     button_debouncer dbns_right (
       .clk         ( pixel_clk  ),
@@ -112,7 +116,8 @@ module sberday_nexys_a7_svga (
       .sw_i        ( BTNR       ),
       .sw_state_o  ( button_r   ),
       .sw_down_o   ( button_r_d ),
-      .sw_up_o     ( button_r_u )
+      .sw_up_o     ( button_r_u ),
+      .sw_long     ( long_r     )
     );
     button_debouncer dbns_down (
       .clk         ( pixel_clk  ),
@@ -120,7 +125,8 @@ module sberday_nexys_a7_svga (
       .sw_i        ( BTND       ),
       .sw_state_o  ( button_d   ),
       .sw_down_o   ( button_d_d ),
-      .sw_up_o     ( button_d_u )
+      .sw_up_o     ( button_d_u ),
+      .sw_long     ( long_d     )
     );
   //----------- LEDs                                             -----------//
       assign LED [15:8] = SW[15:8];
