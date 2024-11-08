@@ -1,4 +1,4 @@
-module sberday_nexys_a7_svga (
+zodule sberday_nexys_a7_svga (
   //----------- CLOCK                                            -------------//
     input   logic            CLK100MHZ ,
   //----------- Switches                                         -------------//
@@ -133,7 +133,7 @@ module sberday_nexys_a7_svga (
       assign LED [7:3] = {button_u, button_l, button_r, button_d, button_c};
       assign LED [1:0] = demo_regime_status;
       //RGB
-      assign {LED16_R, LED16_G, LED16_B} = 3'b000;
+      assign {LED16_R, LED16_G, LED16_B} = 3'b111 & long_c;
       assign {LED17_R, LED17_G, LED17_B} = 3'b000;
   //----------- Seven Segments Indicators                        -----------//
     // refresh frequency of about 1 KHz to 60Hz we need to devide by 8 //
