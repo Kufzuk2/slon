@@ -1,7 +1,7 @@
 module button_debouncer #(
   parameter    CNT_WIDTH      = 16,
   parameter    UNPUSHED_STATE = 1'b0,
-  parameter    HALF_MS        =  'd50000000
+  parameter    HALF_MS        =  'd12500000
 
 
 
