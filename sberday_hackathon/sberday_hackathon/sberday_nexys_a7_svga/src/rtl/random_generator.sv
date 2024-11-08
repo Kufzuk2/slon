@@ -1,5 +1,6 @@
 module random_generator (
     input logic clk,
+    input logic rst,
     
     input logic [31:0] seed_i,
     input logic        seed_v,
