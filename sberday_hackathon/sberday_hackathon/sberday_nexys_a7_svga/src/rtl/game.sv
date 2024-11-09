@@ -182,26 +182,38 @@ module game (
 
     //for picture with size 128x128 we need 16384 pixel information
 
+  localparam int unsigned MAX_CELL_WIDTH  = 25;
+  localparam int unsigned MAX_CELL_HEIGHT = 17;
+  localparam int unsigned CELL_X_WIDTH = $clog2(MAX_CELL_WIDTH);
+  localparam int unsigned CELL_Y_WIDTH = $clog2(MAX_CELL_HEIGHT);
+
+  logic [3:0] cells_state [MAX_CELL_WIDTH - 1 : 0][MAX_CELL_HEIGHT - 1 : 0];
+  logic [1:0] cells_vis [MAX_CELL_WIDTH - 1 : 0][MAX_CELL_HEIGHT - 1 : 0];
+  logic [CELL_X_WIDTH - 1 : 0] player_x;
+  logic [CELL_Y_WIDTH - 1 : 0] player_y;
+
   game_fsm #(
-    .MAX_CELL_WIDTH(25), .MAX_CELL_HEIGHT(16)
+    .MAX_CELL_WIDTH(MAX_CELL_WIDTH), .MAX_CELL_HEIGHT(MAX_CELL_HEIGHT)
   ) game_logic (
-    .clk(pixel_clk), .rst(rst_n),
+    .clk (pixel_clk), 
+    .rst (rst_n),
 
-    .button_c_short(button_c), .button_c_long(1'b0),
+    .button_c_short (button_c), 
+    .button_c_long  (1'b0),
 
-    .button_u(button_u),
-    .button_d(button_d),
-    .button_r(button_r),
-    .button_l(button_l),
+    .button_u (button_u),
+    .button_d (button_d),
+    .button_r (button_r),
+    .button_l (button_l),
 
-    .field_width_i('d25),
-    .field_height_i('d15),
-    .mines_count_i('d72),
+    .field_width_i  ('d25),
+    .field_height_i ('d16),
+    .mines_count_i  ('d72),
 
-    .cells_state_o(),
-    .cells_vis_o(),
-    .player_x_o(),
-    .player_y_o()
+    .cells_state_o (cells_state),
+    .cells_vis_o   (cells_vis),
+    .player_x_o    (player_x),
+    .player_y_o    (player_y)
   );
 
     tile_rom tile_rom (
