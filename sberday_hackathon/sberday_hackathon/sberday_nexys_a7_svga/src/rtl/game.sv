@@ -206,9 +206,9 @@ module game (
     .button_r (button_r),
     .button_l (button_l),
 
-    .field_width_i  ('d25),
-    .field_height_i ('d16),
-    .mines_count_i  ('d72),
+    .field_width_i  ('d8),
+    .field_height_i ('d8),
+    .mines_count_i  ('d20),
 
     .cells_state_o (cells_state),
     .cells_vis_o   (cells_vis),
@@ -312,13 +312,17 @@ always @(posedge pixel_clk) begin
                                      sber_logo_rom_out[0]}) >> cell_num * 12;
 end
 
+logic is_player;
+
+assign is_player = (current_cell_x == player_x) & (current_cell_y == player_y);
+
 //------------- RGB MUX outputs                                  -------------//
   always_comb begin
       object_draw = /*(h_coord[9:0] >= 10'd0) & */(h_coord[9:0] < 10'd799) &/* (v_coord >= 10'd0) & */(v_coord < 10'd599) /*& ~(sber_logo_rom_out[10:0]==11'h000)*/ ; // Logo size is 128x128 Pixcels
   end
 
-  assign  red     = object_draw ? (sber_logo_rom_out_mask[3:0]  ) : (SW[0] ? 4'h8 : 4'h0);
-  assign  green   = object_draw ? (sber_logo_rom_out_mask[7:4]  ) : (SW[1] ? 4'h8 : 4'h0);
-  assign  blue    = object_draw ? (sber_logo_rom_out_mask[11:8] ) : (SW[2] ? 4'h8 : 4'h0);
+  assign  red     = object_draw ? (is_player ? 4'h1 : 4'h0 + sber_logo_rom_out_mask[3:0]) : (SW[0] ? 4'h8 : 4'h0);
+  assign  green   = object_draw ? (is_player ? 4'h1 : 4'h0 + sber_logo_rom_out_mask[7:4]  ) : (SW[1] ? 4'h8 : 4'h0);
+  assign  blue    = object_draw ? (is_player ? 4'h1 : 4'h0 + sber_logo_rom_out_mask[11:8] ) : (SW[2] ? 4'h8 : 4'h0);
 //____________________________________________________________________________//
 endmodule

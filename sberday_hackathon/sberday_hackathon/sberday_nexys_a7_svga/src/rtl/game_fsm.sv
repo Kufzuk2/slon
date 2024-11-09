@@ -201,7 +201,7 @@ always_ff @(posedge clk) begin
     if (rst | game_state_ff == GAME_START) begin
         for (int i = 0; i < MAX_CELL_HEIGHT; i = i + 1) begin
             for (int j = 0; j < MAX_CELL_WIDTH; j = j + 1) begin
-                cell_vis_ff[i][j] <= 'd0;
+                cell_vis_ff[i][j] <= CELL_CLOSE;
             end 
         end
     end

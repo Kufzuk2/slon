@@ -119,11 +119,13 @@ always_ff @(posedge clk)
         cell_y_ff <= cell_y_next;
     end
 
+genvar i, j;
+
 always_ff @(posedge clk) begin
     if ((~rst) | (state_ff == IDLE)) begin
-        for (int i = 0; i < MAX_CELL_HEIGHT; i = i + 1) begin
-            for (int j = 0; j < MAX_CELL_WIDTH; j = j + 1) begin
-                game_field_o[i][j] = 'd0;
+        for (i = 0; i < MAX_CELL_HEIGHT; i = i + 1) begin
+            for (j = 0; j < MAX_CELL_WIDTH; j = j + 1) begin
+                game_field_o[i][j] <= 'd0;
             end 
         end
                 
