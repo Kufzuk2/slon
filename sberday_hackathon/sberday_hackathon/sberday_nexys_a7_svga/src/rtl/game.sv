@@ -178,7 +178,7 @@ module game (
     // Screen resoulution is 800x600, the logo size is 128x128. We need to put the logo in the center.
     // Logo offset = (800-128)/2=336 from the left edge; Logo v coord = (600-128)/2 = 236
     // Cause we need 1 clock for reading, we start erlier
-    assign sber_logo_read_address = (h_coord - (h_coord >> 5)*11'd32) + (({1'd0,(v_coord + 10'd7) - (v_coord + 10'd7 >> 5)*10'd32}))*11'd32;
+    assign sber_logo_read_address = (h_coord - (h_coord >> 5)*11'd32) + (({1'd0,(v_coord ) - (v_coord >> 5)*10'd32}))*11'd32;
 
     //for picture with size 128x128 we need 16384 pixel information
 
@@ -198,7 +198,7 @@ module game (
     .clk (pixel_clk), 
     .rst (rst_n),
 
-    .button_c_short (button_c), 
+    .button_c_short (button_u), 
     .button_c_long  (1'b0),
 
     .button_u (button_u),
@@ -271,7 +271,36 @@ module game (
 //____________________________________________________________________________//
 wire [155:0] mask;
 reg  [155:0] sber_logo_rom_out_mask = 156'b0;
-assign mask = 156'b1111_1111_1111 << 5*12;
+
+logic [$clog2(12) - 1 : 0] cell_num;
+logic [CELL_X_WIDTH - 1 : 0] current_cell_x;
+logic [CELL_Y_WIDTH - 1 : 0] current_cell_y;
+
+assign current_cell_x = (CELL_X_WIDTH)'(h_coord + 11'd64 >> 5);
+assign current_cell_y = (CELL_Y_WIDTH)'(v_coord >> 5);
+
+logic [3:0] current_cell_state;
+assign current_cell_state = cells_state[current_cell_x][current_cell_y];
+
+always_comb begin
+  cell_num = 'd0;
+
+  case (current_cell_state)
+  'd0: cell_num = 'd12;
+  'd1: cell_num = 'd2;
+  'd2: cell_num = 'd3;
+  'd3: cell_num = 'd4;
+  'd4: cell_num = 'd5;
+  'd5: cell_num = 'd6;
+  'd6: cell_num = 'd7;
+  'd7: cell_num = 'd8;
+  'd8: cell_num = 'd9;
+  'd9: cell_num = 'd10;
+  default: cell_num = 'd12;
+  endcase
+end
+
+assign mask = 156'b1111_1111_1111 << cell_num*12;
 
 always @(posedge pixel_clk) begin
   sber_logo_rom_out_mask <= (mask & {sber_logo_rom_out[12],sber_logo_rom_out[11],
@@ -280,12 +309,12 @@ always @(posedge pixel_clk) begin
                                      sber_logo_rom_out[6], sber_logo_rom_out[5],
                                      sber_logo_rom_out[4],sber_logo_rom_out[3],
                                      sber_logo_rom_out[2],sber_logo_rom_out[1],
-                                     sber_logo_rom_out[0]}) >> 5*12;
+                                     sber_logo_rom_out[0]}) >> cell_num * 12;
 end
 
 //------------- RGB MUX outputs                                  -------------//
   always_comb begin
-      object_draw = /*(h_coord[9:0] >= 10'd0) & */(h_coord[9:0] < 10'd799) & (v_coord >= 10'd88) & (v_coord < 10'd599) /*& ~(sber_logo_rom_out[10:0]==11'h000)*/ ; // Logo size is 128x128 Pixcels
+      object_draw = /*(h_coord[9:0] >= 10'd0) & */(h_coord[9:0] < 10'd799) &/* (v_coord >= 10'd0) & */(v_coord < 10'd599) /*& ~(sber_logo_rom_out[10:0]==11'h000)*/ ; // Logo size is 128x128 Pixcels
   end
 
   assign  red     = object_draw ? (sber_logo_rom_out_mask[3:0]  ) : (SW[0] ? 4'h8 : 4'h0);

@@ -109,8 +109,8 @@ logic [CELL_Y_WIDTH - 1 : 0] cell_y_next;
 assign cell_x_next = random_num_ff [CELL_X_WIDTH - 1 : 0];
 assign cell_y_next = random_num_ff [CELL_X_WIDTH + CELL_Y_WIDTH - 1 : CELL_X_WIDTH];
 
-logic random_num_valid = (cell_x_next < field_width_i)  & (cell_x_next != 'd0) & 
-                         (cell_y_next < field_height_i) & (cell_y_next != 'd0) & 
+logic random_num_valid = (cell_x_next < field_width_ff)  & (cell_x_next != 'd0) & 
+                         (cell_y_next < field_height_ff) & (cell_y_next != 'd0) & 
                          (game_field_o[cell_x_next][cell_y_next] != 'd9);
 
 always_ff @(posedge clk)
@@ -130,15 +130,31 @@ always_ff @(posedge clk) begin
     end
     else if (state_ff == WRITE_CELLS) begin
         game_field_o[cell_x_ff][cell_y_ff] <= 'd9;
-        
-        game_field_o[cell_x_ff - 'd1][cell_y_ff - 'd1] <= game_field_o[cell_x_ff - 'd1][cell_y_ff - 'd1] + 'd1;
-        game_field_o[cell_x_ff - 'd1][cell_y_ff      ] <= game_field_o[cell_x_ff - 'd1][cell_y_ff      ] + 'd1;
-        game_field_o[cell_x_ff - 'd1][cell_y_ff + 'd1] <= game_field_o[cell_x_ff - 'd1][cell_y_ff + 'd1] + 'd1;
-        game_field_o[cell_x_ff      ][cell_y_ff - 'd1] <= game_field_o[cell_x_ff      ][cell_y_ff - 'd1] + 'd1;
-        game_field_o[cell_x_ff      ][cell_y_ff + 'd1] <= game_field_o[cell_x_ff      ][cell_y_ff + 'd1] + 'd1;
-        game_field_o[cell_x_ff + 'd1][cell_y_ff - 'd1] <= game_field_o[cell_x_ff + 'd1][cell_y_ff - 'd1] + 'd1;
-        game_field_o[cell_x_ff + 'd1][cell_y_ff      ] <= game_field_o[cell_x_ff + 'd1][cell_y_ff      ] + 'd1;
-        game_field_o[cell_x_ff + 'd1][cell_y_ff + 'd1] <= game_field_o[cell_x_ff + 'd1][cell_y_ff + 'd1] + 'd1;
+
+        game_field_o[cell_x_ff - 'd1][cell_y_ff - 'd1] <= (game_field_o[cell_x_ff - 'd1][cell_y_ff - 'd1] != 'd9) ? 
+                                                           game_field_o[cell_x_ff - 'd1][cell_y_ff - 'd1] + 'd1   :
+                                                           'd9;
+        game_field_o[cell_x_ff - 'd1][cell_y_ff      ] <= (game_field_o[cell_x_ff - 'd1][cell_y_ff      ] != 'd9) ?
+                                                           game_field_o[cell_x_ff - 'd1][cell_y_ff      ] + 'd1   :
+                                                           'd9;
+        game_field_o[cell_x_ff - 'd1][cell_y_ff + 'd1] <= (game_field_o[cell_x_ff - 'd1][cell_y_ff + 'd1] != 'd9) ?
+                                                           game_field_o[cell_x_ff - 'd1][cell_y_ff + 'd1] + 'd1   :
+                                                           'd9;
+        game_field_o[cell_x_ff      ][cell_y_ff - 'd1] <= (game_field_o[cell_x_ff      ][cell_y_ff - 'd1] != 'd9) ?
+                                                           game_field_o[cell_x_ff      ][cell_y_ff - 'd1] + 'd1   :
+                                                           'd9;
+        game_field_o[cell_x_ff      ][cell_y_ff + 'd1] <= (game_field_o[cell_x_ff      ][cell_y_ff + 'd1] != 'd9) ?
+                                                           game_field_o[cell_x_ff      ][cell_y_ff + 'd1] + 'd1   :
+                                                           'd9;
+        game_field_o[cell_x_ff + 'd1][cell_y_ff - 'd1] <= (game_field_o[cell_x_ff + 'd1][cell_y_ff - 'd1] != 'd9) ?
+                                                           game_field_o[cell_x_ff + 'd1][cell_y_ff - 'd1] + 'd1   :
+                                                           'd9;
+        game_field_o[cell_x_ff + 'd1][cell_y_ff      ] <= (game_field_o[cell_x_ff + 'd1][cell_y_ff      ] != 'd9) ?
+                                                           game_field_o[cell_x_ff + 'd1][cell_y_ff      ] + 'd1   :
+                                                           'd9;
+        game_field_o[cell_x_ff + 'd1][cell_y_ff + 'd1] <= (game_field_o[cell_x_ff + 'd1][cell_y_ff + 'd1] != 'd9) ?
+                                                           game_field_o[cell_x_ff + 'd1][cell_y_ff + 'd1] + 'd1   :
+                                                           'd9;
     end
 end
 
