@@ -51,6 +51,28 @@ module sberday_nexys_a7_svga (
     logic         button_r, button_l_r, button_r_u;
   //----------- Seven Segments Indicators                        -----------//
     wire  [31:0]  sevseg_32bit_hex_val;
+    wire  [6: 0]  out_sevseg;
+
+    sevseg_ctrl sevseg_mine_num
+    (
+        .clk(pixel_clk),
+        .arst_n(rst_n),
+        .sevseg_32bit_hex_val(72),
+        .seg_active_n(out_sevseg)
+    );
+
+
+      
+    always @(posedge pixel_clk) begin
+        if (!rst_n)
+            {DP, CG, CF, CE, CD, CC, CB, CA} <= 'h0;
+        else
+            {DP, CG, CF, CE, CD, CC, CB, CA} <= {1'h0, out_sevseg;
+    end
+
+
+
+
   //----------- Accelerometor                                    -----------//
     wire [7:0]     accel_data_x;     // FPGA board accelerometer X data
     wire [7:0]     accel_data_y;     // FPGA board accelerometer Y data
