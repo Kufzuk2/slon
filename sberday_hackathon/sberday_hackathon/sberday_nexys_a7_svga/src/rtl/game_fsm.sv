@@ -5,7 +5,7 @@ module game_fsm #(
     localparam int unsigned CELL_Y_WIDTH = $clog2(MAX_CELL_HEIGHT),
     localparam int unsigned CELL_COUNT = MAX_CELL_WIDTH * MAX_CELL_HEIGHT,
     localparam int unsigned MINES_COUNT = CELL_COUNT / 4,
-    localparam int unsigned MINES_COUNT_FF_WIDTH = $clog2(CELL_COUNT / 4), 
+    localparam int unsigned MINES_COUNT_FF_WIDTH = $clog2(CELL_COUNT / 4)
 )
 (
     input logic clk,
@@ -96,7 +96,8 @@ always_comb begin
                  else if (flag_clicked)         game_state_next = FLAG_PUT;
     CURSOR_MOVE: game_state_next = IDLE;
     FLAG_PUT:    game_state_next = IDLE;
-    OPEN_CELL: 
+    //OPEN_CELL:
+    default:    game_state_next = IDLE; // TODO
     endcase
 end
 
@@ -195,13 +196,11 @@ end
 
 always_ff @(posedge clk) begin
     if (rst | game_state_ff == GAME_START) begin
-        generate
-            for (genvar i = 0; i < MAX_CELL_HEIGHT; i = i + 1) begin
-                for (genvar j = 0; j < MAX_CELL_WIDTH; j = j + 1) begin
-                    cell_vis_ff[i][j] <= 'd0;
-                end 
-            end
-        endgenerate
+        for (int i = 0; i < MAX_CELL_HEIGHT; i = i + 1) begin
+            for (int j = 0; j < MAX_CELL_WIDTH; j = j + 1) begin
+                cell_vis_ff[i][j] <= 'd0;
+            end 
+        end
     end
     else if (game_state_ff == FLAG_PUT | game_state_ff == OPEN_CELL)
         cell_vis_ff[player_x_ff][player_y_ff] <= cell_vis_next;

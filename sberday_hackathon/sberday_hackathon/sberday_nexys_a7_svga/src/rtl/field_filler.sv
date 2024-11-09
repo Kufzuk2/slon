@@ -3,10 +3,10 @@ module field_filler #(
     parameter int unsigned MAX_CELL_HEIGHT = 16,
 
     localparam int unsigned CELL_COUNT   = MAX_CELL_HEIGHT * MAX_CELL_WIDTH,
-    localparam int unsigned MINES_COUNT  = CELL_COUNT / 4;
-    localparam int unsigned MINES_COUNT_FF_WIDTH = $clog2(MINES_COUNT);
-    localparam int unsigned CELL_X_WIDTH = $clog2(MAX_CELL_WIDTH);
-    localparam int unsigned CELL_Y_WIDTH = $clog2(MAX_CELL_HEIGHT);
+    localparam int unsigned MINES_COUNT  = CELL_COUNT / 4,
+    localparam int unsigned MINES_COUNT_FF_WIDTH = $clog2(MINES_COUNT),
+    localparam int unsigned CELL_X_WIDTH = $clog2(MAX_CELL_WIDTH),
+    localparam int unsigned CELL_Y_WIDTH = $clog2(MAX_CELL_HEIGHT)
 )
 (
     input logic clk,
@@ -121,13 +121,12 @@ always_ff @(posedge clk)
 
 always_ff @(posedge clk) begin
     if ((~rst) | (state_ff == IDLE)) begin
-        generate
-            for (genvar i = 0; i < MAX_CELL_HEIGHT; i = i + 1) begin
-                for (genvar j = 0; j < MAX_CELL_WIDTH; j = j + 1) begin
-                    game_field_o[i][j] = 'd0;
-                end 
-            end
-        endgenerate
+        for (int i = 0; i < MAX_CELL_HEIGHT; i = i + 1) begin
+            for (int j = 0; j < MAX_CELL_WIDTH; j = j + 1) begin
+                game_field_o[i][j] = 'd0;
+            end 
+        end
+                
     end
     else if (state_ff == WRITE_CELLS) begin
         game_field_o[cell_x_ff][cell_y_ff] <= 'd9;

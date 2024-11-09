@@ -190,6 +190,29 @@ module game (
     assign sber_logo_read_address = h_coord % 11'd32 - 11'd0 + ({1'd0, v_coord % 10'd32} - 11'd0)*11'd32;
 
     //for picture with size 128x128 we need 16384 pixel information
+
+  game_fsm #(
+    .MAX_CELL_WIDTH(25), .MAX_CELL_HEIGHT(16)
+  ) game_logic (
+    .clk(clk), .rst(rst),
+
+    button_c_short(button_c), .button_c_long(1'b0),
+
+    .button_u(button_u),
+    .button_d(button_d),
+    .button_r(button_r),
+    .button_l(button_l),
+
+    .field_width_i('d25),
+    .field_height_i('d16),
+    .mines_count_i('d72),
+
+    .cells_state_o(),
+    .cells_vis_o(),
+    .player_x_o(),
+    .player_y_o()
+  );
+
     tile_rom tile_rom (
       .addr ( sber_logo_read_address ),
       .word ( sber_logo_rom_out[0]      ) 
