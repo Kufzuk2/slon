@@ -37,7 +37,7 @@ always_ff @(posedge clk)
 logic [31:0] random_num_ff;
 
 random_generator pos_gen (
-    .clk(clk), .seed_i(clk_counter_ff), .seed_v(fill_start_i), .random_o(random_num_ff)
+    .clk(clk), .rst(rst), .seed_i(clk_counter_ff), .seed_v(fill_start_i), .random_o(random_num_ff)
 );
 
 // state machine
@@ -111,7 +111,7 @@ assign cell_y_next = random_num_ff [CELL_X_WIDTH + CELL_Y_WIDTH - 1 : CELL_X_WID
 
 logic random_num_valid = (cell_x_next < field_width_i)  & (cell_x_next != 'd0) & 
                          (cell_y_next < field_height_i) & (cell_y_next != 'd0) & 
-                         (game_field_o[cell_x][cell_y] != 'd9);
+                         (game_field_o[cell_x_next][cell_y_next] != 'd9);
 
 always_ff @(posedge clk)
     if (state_ff != WRITE_CELLS) begin

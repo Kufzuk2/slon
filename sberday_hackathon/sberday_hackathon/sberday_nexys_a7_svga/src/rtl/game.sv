@@ -185,9 +185,9 @@ module game (
   game_fsm #(
     .MAX_CELL_WIDTH(25), .MAX_CELL_HEIGHT(16)
   ) game_logic (
-    .clk(clk), .rst(rst),
+    .clk(pixel_clk), .rst(rst_n),
 
-    button_c_short(button_c), .button_c_long(1'b0),
+    .button_c_short(button_c), .button_c_long(1'b0),
 
     .button_u(button_u),
     .button_d(button_d),
@@ -195,7 +195,7 @@ module game (
     .button_l(button_l),
 
     .field_width_i('d25),
-    .field_height_i('d16),
+    .field_height_i('d15),
     .mines_count_i('d72),
 
     .cells_state_o(),

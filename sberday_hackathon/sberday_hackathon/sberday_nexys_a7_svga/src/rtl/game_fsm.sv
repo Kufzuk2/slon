@@ -24,7 +24,7 @@ module game_fsm #(
     input logic [MINES_COUNT_FF_WIDTH - 1 : 0] mines_count_i,
 
     output logic [3:0] cells_state_o [MAX_CELL_WIDTH - 1 : 0][MAX_CELL_HEIGHT - 1 : 0],
-    output vis_state cells_vis_o [MAX_CELL_WIDTH - 1 : 0][MAX_CELL_HEIGHT - 1 : 0],
+    output logic [1:0] cells_vis_o [MAX_CELL_WIDTH - 1 : 0][MAX_CELL_HEIGHT - 1 : 0],
     output logic [CELL_X_WIDTH - 1 : 0] player_x_o,
     output logic [CELL_Y_WIDTH - 1 : 0] player_y_o
 );
@@ -50,6 +50,8 @@ assign cells_vis_o   = cell_vis_ff;
 logic [CELL_X_WIDTH - 1 : 0] field_width_ff;
 logic [CELL_Y_WIDTH - 1 : 0] field_height_ff;
 logic [MINES_COUNT_FF_WIDTH - 1 : 0] mines_count_ff;
+
+logic field_generated;
 
 logic move_button_clicked;
 logic open_cell_clicked;
@@ -89,7 +91,7 @@ always_comb begin
     game_state_next = game_state_ff;
 
     case (game_state_ff)
-    GAME_START:  if (button_c) game_state_next = FIELD_GEN;
+    GAME_START:  if (button_c_short) game_state_next = FIELD_GEN;
     FIELD_GEN:   if (field_generated) game_state_next = IDLE; 
     IDLE:             if (move_button_clicked)  game_state_next = CURSOR_MOVE;
                  else if (open_cell_clicked)    game_state_next = OPEN_CELL;
@@ -123,7 +125,7 @@ field_filler #(
     .field_width_i(field_width_ff), 
     .field_height_i(field_height_ff),
     .fill_start_i(field_generate_start_ff),
-    .fill_finished_o(field_generated),
+    .fill_finished_o(field_generated)
 );
 
 assign field_generate_start_next = (game_state_ff   == GAME_START) & 
@@ -191,6 +193,7 @@ always_comb begin
         FLAG_PUT: if (cell_vis_curr == CELL_CLOSE)     cell_vis_next = CELL_FLAG;
                   else if (cell_vis_curr == CELL_FLAG) cell_vis_next = CELL_CLOSE;
         OPEN_CELL: if (cell_vis_curr == CELL_CLOSE) cell_vis_next = CELL_OPEN;
+        default: cell_vis_next = cell_vis_curr;
     endcase
 end
 
